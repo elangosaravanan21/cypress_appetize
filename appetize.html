@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book List with Appetize Preview</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    /* Book list container */
+    .book-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    /* Book item styles */
+    .book-item {
+      position: relative;
+      width: 100%;
+      padding-top: 100%; /* Makes the book square */
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* Book content inside square */
+    .book-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    /* App icons for new tab and embed mode */
+    .app-icon {
+      position: fixed;
+      bottom: 20px;
+      width: 50px;
+      height: 50px;
+      background-color: #007bff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .app-icon img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .app-icon:hover {
+      transform: scale(1.1);
+    }
+
+    /* Left-bottom icon */
+    .app-icon-left {
+      left: 20px;
+    }
+
+    /* Right-bottom icon */
+    .app-icon-right {
+      right: 20px;
+    }
+
+    /* Tooltip styles */
+    .tooltip {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    /* Show tooltip on hover */
+    .app-icon:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+	 /* Modal for embedded preview */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80vw;
+      height: 80vh;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      overflow: hidden;
+      display: flex; /* Centering iframe inside */
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; /* Allows close button and iframe stacking */
+    }
+
+    /* Updated iframe style to avoid scrollbars */
+    #appetize-iframe {
+      width: 100%; /* Fill modal without exceeding it */
+      height: 100%;
+      border: none;
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    /* Close button styling */
+    .close-button {
+      background-color: #ff5c5c;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      align-self: flex-end;
+      margin: 10px;
+    }
+
+    .close-button:hover {
+      background-color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Book List</h1>
+  <div class="book-list">
+    <div class="book-item">
+      <div class="book-content">Book 1</div>
+    </div>
+    <div class="book-item">
+      <div class="book-content">Book 2</div>
+    </div>
+    <div class="book-item">
+      <div class="book-content">Book 3</div>
+    </div>
+    <div class="book-item">
+      <div class="book-content">Book 4</div>
+    </div>
+  </div>
+
+  <!-- Left-bottom icon (New Tab) -->
+  <div class="app-icon app-icon-left" onclick="openAppetizeNewTab()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/smartphone-tablet.png" alt="Preview App">
+    <div class="tooltip">Open in New Tab</div>
+  </div>
+
+  <!-- Right-bottom icon (Embed Mode) -->
+  <div class="app-icon app-icon-right" onclick="openModal()">
+    <img src="https://img.icons8.com/ios-filled/50/ffffff/smartphone-tablet.png" alt="Preview App">
+    <div class="tooltip">Open in Embed Mode</div>
+  </div>
+  
+   <!-- Modal for Appetize embed -->
+ <!-- Modal for Appetize embed -->
+<div class="modal" id="modal">
+  <button class="close-button" onclick="closeModal()">Close</button>
+  <iframe id="appetize-iframe" src=""></iframe> <!-- Ensure src is initially empty -->
+</div>
+  <div class="modal-backdrop" id="modal-backdrop" onclick="closeModal()"></div>
+
+ <script>
+  // Function to open Appetize emulator in a new tab
+  function openAppetizeNewTab() {
+    window.open("https://appetize.io/embed/b_iulj3hlxpgmmw5z3eyfp4af36i", "_blank");
+  }
+
+  // Function to open the modal for embedded mode
+  function openModal() {
+    const iframe = document.getElementById("appetize-iframe");
+    iframe.src = "https://appetize.io/embed/b_iulj3hlxpgmmw5z3eyfp4af36i?autoplay=true&orientation=portrait";
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal-backdrop").style.display = "block";
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    const iframe = document.getElementById("appetize-iframe");
+    iframe.src = ""; // Clear the iframe src to prevent the emulator from running in the background
+    document.getElementById("modal").style.display = "none";
+    document.getElementById("modal-backdrop").style.display = "none";
+  }
+  // Ensure the modal is closed on page load
+  window.onload = function() {
+    closeModal();
+  };
+</script>
+
+</body>
+</html>
